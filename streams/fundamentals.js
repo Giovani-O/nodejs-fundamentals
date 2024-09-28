@@ -8,8 +8,10 @@
 // pipe é usado para ler uma stream, no caso stdin está sendo lida
 // process.stdin.pipe(process.stdout)
 
+// Todo retorno de uma stream precisa ser um buffer, ver exemplos abaixo
+
 // Construindo uma stream do zero
-import { Readable } from 'node:stream'
+import { Readable, Writable, Transform } from 'node:stream'
 
 class OneToHundredStream extends Readable {
   index = 1
@@ -28,4 +30,27 @@ class OneToHundredStream extends Readable {
   }
 }
 
-new OneToHundredStream().pipe(process.stdout)
+// Stream de transformação, transforma um dado em outro
+class InvertNumberStream extends Transform {
+  _transform(chunk, encoding, callback) {
+    const transformed = Number(chunk.toString()) * -1
+
+    // O primeiro parametro é um erro, caso ocorra um
+    callback(null, Buffer.from(String(transformed)))
+  }
+}
+
+// Stream de escrita sempre irá processar um dado, mas nunca transformar um dado em outra coisa ou retornar algo
+class MultiplyByTenStream extends Writable {
+  // chunk é o dado enviado através do push da strea de leitura
+  // encoding é como esse dado está codificado
+  // callback é uma função que a stream de escrita chama após terminar de processar a operação
+  _write(chunk, encoding, callback) {
+    console.log(Number(chunk.toString()) * 10)
+    callback()
+  }
+}
+
+new OneToHundredStream() // Leitura
+  .pipe(new InvertNumberStream()) // Transformação
+  .pipe(new MultiplyByTenStream()) // Escrita
