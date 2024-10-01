@@ -1,1 +1,9 @@
-{"users":[{"id":1,"name":"John Doe","email":"johndoe@mail.com"},{"id":1,"name":"Jane Doe","email":"janedoe@mail.com"},{"id":"6c881478-1069-4c37-a7f4-ef8d64613157","name":"Murasaki","email":"murasaki@mail.com"}]}
+{
+  "users": [
+    {
+      "id": "6c881478-1069-4c37-a7f4-ef8d64613157",
+      "name": "Murasaki",
+      "email": "murasaki@mail.com"
+    }
+  ]
+}
