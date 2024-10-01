@@ -1,9 +1,10 @@
 // Importação com ESModules, módulos internos do node são importados com node:
 import http from 'node:http'
-import { resourceLimits } from 'node:worker_threads'
 import { json } from './middlewares/json.js'
+import { Database } from './database.js'
+import { randomUUID } from 'node:crypto'
 
-const users = []
+const database = new Database()
 
 // Cria um servidor HTTP
 const server = http.createServer(async (req, res) => {
@@ -15,17 +16,19 @@ const server = http.createServer(async (req, res) => {
 
   if (method === 'GET' && url === '/users') {
     // Define os cabeçalhos na response
-    return res.end(JSON.stringify(users))
+    return res.end(JSON.stringify(database.select('users')))
   }
 
   if (method === 'POST' && url === '/users') {
     const { name, email } = req.body
 
-    users.push({
-      id: 1,
+    const user = {
+      id: randomUUID(),
       name: name,
       email: email,
-    })
+    }
+
+    database.insert('users', user)
 
     return res.writeHead(201).end('Usuário adicionado')
   }
